@@ -15,7 +15,7 @@ source('utils/horizon.R')
 
 knitr::opts_chunk$set(fig.width=9, fig.height=4.5,
                       echo=F, 
-                      cache=T,
+                      cache=F,
                       warning=F, 
                       message=F)
 
@@ -24,7 +24,7 @@ if (!exists('cvb')) {
     cvb <- data.frame(Name=vector(), Efficiency=vector(), Value=vector(), Notice=vector(), stringsAsFactors = F)
 }
 
-if (!exists('ex1')) {
+if (!exists('microservice')) {
 #  ex1 <- read_transactions('./data/raw/short-tall-spike.rds', 'backend')  
 #    ex1 <- read_transactions('./data/raw/staging_transactions_56.rds', 'db')
     microservice <- read_transactions('./data/timeseries/microservice.rds', 'duration')

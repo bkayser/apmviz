@@ -17,11 +17,12 @@ output:
 source('init.R')
 ```
 
-* Looking at collection of related things
-    * Cluster of servers
-    * Application server nodes
-    * Pages in an application
-    * Response times broken down by browser
+Looking at collection of related things
+
+* Cluster of servers
+* Application server nodes
+* Pages in an application
+* Response times broken down by browser
     
 ## Sparklines - Mean
 

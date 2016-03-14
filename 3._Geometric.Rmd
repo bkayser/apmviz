@@ -23,7 +23,7 @@ source('init.R')
 ```{r}
 
 mmdata <- read_transactions('./data/timeseries/supplychain.rds', 'frontend')
-mm_g <- ggplot(mmdata$events, aes(x=value)) + xlim(0, ex1$xlimit) +
+mm_g <- ggplot(mmdata$events, aes(x=value)) + xlim(0, 1.5*mmdata$xlimit) +
     my_plot_theme +
     theme(legend.position='none') +
     geom_histogram(bins=120, position='dodge')

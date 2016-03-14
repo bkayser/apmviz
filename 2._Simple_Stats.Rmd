@@ -11,23 +11,21 @@ output:
     widescreen: yes
 ---
 
-# In Graphic Detail | Data Science and APM
+## Estimating the value of data | What sort of insight does it provide?
 
 ```{r init_ss, echo=F, message=F, warning=F}
 source('init.R')
 ```
 
-## Data Science and Data Visualization
+* Does it help us measure variation over time?
+* Does it give us a qualitative assessment of the current status?
+* Does it help us measure differences across similar things, like applications or servers?
+* Does it help us identify trends and anomalies?
+* Does it reveal underlying patterns or relationships in the data?
 
-<img class='graphic tall' src='images/CCSCvsPTFC-stats.png'/>
+## Estimating the efficiency | How cheaply can we collect the data
 
-## Data Science and Data Visualization
-
-<img class='graphic tall' src='images/CCSCvsPTFC-defpasses.png'/>
-
-
-## Cost of Statistics
-
+* Is space or bandwidth a premium?
 * Can it be aggregated and resampled using a closed form expression?
     * $min()$, $max()$
     * Mean: $\bar{x} = \frac{1}{n}\sum_{i=0}^n x_i$ where $x_i$ is the measure of transaction $i$
@@ -36,8 +34,6 @@ source('init.R')
     * Histograms
     * Median, Percentile
     * Scatterplots
-
-To track the mean and standard deviation, just sum the number of transactions, the total response time, and the square of the total response time.
 
 
 ## Cost/Benefit Grid {.cvb}
@@ -90,9 +86,8 @@ cvb_plot(cvb) +
 ## Cost/Benefit - Histograms
 
 ```{r}
-ex1 <- read_transactions('./data/timeseries/supplychain.rds', 'frontend')
-ggplot(ex1$events, aes(x=value)) + xlim(0, ex1$xlimit) +
-    geom_histogram(aes(fill=transaction), bins=120, position='dodge') +
+ggplot(microservice$events, aes(x=value)) + xlim(0, microservice$xlimit) +
+    geom_histogram(bins=120) +
     my_plot_theme +
     summary_colorscale +
     summary_linescale +
@@ -191,8 +186,9 @@ ggplot(sample_summary) +
 Summary Statistics Don't Work on Non-Gassian Data
 
 ```{r}
-est_band <- dcast(ex1$plotlines, timestamp ~ measure)
-g_scatter <- scatterplot(ex1)
+scdata <- read_transactions('./data/timeseries/supplychain.rds', 'frontend')
+est_band <- dcast(scdata$plotlines, timestamp ~ measure)
+g_scatter <- scatterplot(scdata)
 g_scatter +
     geom_ribbon(data=est_band, inherit.aes = F,
                 aes(x=timestamp,
@@ -200,7 +196,7 @@ g_scatter +
                     ymin=q25_est),
                 fill=region_fill,
                 alpha=0.4) +
-    geom_line(data=filter(ex1$plotlines, measure %in% c('q25', 'q75')), 
+    geom_line(data=filter(scdata$plotlines, measure %in% c('q25', 'q75')), 
               aes(x=timestamp, y=value, color=measure, linetype=measure),
               size=1.5) +
     summary_colorscale + summary_linescale +
@@ -220,7 +216,7 @@ cvb_plot(cvb)
 
 ## Mean vs Median | Non-gaussian distributions
 
-```{r, cache=T}
+```{r}
 #minimalist_theme <-  theme_blank()theme(legend.position = 'none', text=element_blank())
 ex <- read_transactions('./data/timeseries/supplychain.rds', 'frontend')
 add_plotlines(scatterplot(ex), ex) + blank_theme
@@ -229,20 +225,20 @@ add_plotlines(scatterplot(ex), ex) + blank_theme
 
 ## Mean vs Median | Non-gaussian distributions
 
-```{r, cache=T}
+```{r}
 ex <- read_transactions('./data/timeseries/microservice.rds', 'duration')
 add_plotlines(scatterplot(ex), ex)  + blank_theme
 ```
 
 ## Mean vs Median | Non-gaussian distributions
 
-```{r, cache=T}
+```{r}
 ex <- read_transactions('./data/timeseries/storefront-interrupt.rds', 'backend')
 add_plotlines(scatterplot(ex), ex) + blank_theme
 ```
 
 ## Mean vs Median | Non-gaussian distributions
-```{r, cache=T}
+```{r}
 ex <- read_transactions('./data/timeseries/news-site.rds', 'frontend')
 add_plotlines(scatterplot(ex), ex)  + blank_theme
 

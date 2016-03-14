@@ -37,14 +37,11 @@ March 14, 2016
 ```
 
 
-## Review - Summary Values
-
-* For response time charts use geometric mean for an inexpensive measure.
-* Forget the standard deviation, use the geometric standard deviation.
-* For counts, throughput, use mean.
-* Use Apdex for a user-centered metric.
-
 # Additional Visualizations
+
+
+```{r, child='5._Facets.Rmd'}
+```
 
 ## Box Plots
 
@@ -59,10 +56,6 @@ renderPlot({
 radioButtons('bp', NULL, c(Scatterplot='scatter',Boxplot='boxplot'))
 
 ```
-
-```{r, child='5._Facets.Rmd'}
-```
-
 
 ## Throughput vs Response Time
 
@@ -86,31 +79,35 @@ multiplot(plotlist=charts, cols=3)
     
 ```
 
-Plots of throughput on the X axis and latency on the Y axis.
+Plots of throughput on the X axis and latency on the Y axis.  Color is time of day.
 
 ## Animation
 
-Show Ward's video
+[Traffic Animation](http://marlowe.datanerd.us/datasets/traffic.html)
 
 ## Summary - Monitoring Latency {.build .smaller}
 
 ### When you can collect event level data
+
 * Use Scatterplots for deep visibility
 * Use Median, Inner Quartiles for plots and sparkcharts
 * Use histograms to identify multi-modal behavior
 * Collect multiple dimensions for faceted views when possible
 
 ### When space is a premium
+
 * Be careful using the mean
 * Use Geometric Mean to approximate the median
 * Use Geometric Standard Deviation to approximate inner quartile regions
 * Use Apdex for monitoring the quality of the customer experience
 
-### Consider alternate visualizations
-* Density Filaments
-* Rugplots
-* Animation
+## Summary - Monitoring Latency {.build .smaller}
 
+### Consider alternate visualizations
+
+* Density Filaments
+* Horizon Plots
+* Animation
 
 ## Bill Kayser
 
@@ -120,7 +117,5 @@ Show Ward's video
 * New Relic: www.newrelic.com
 * R Library for getting New Relic Data: `github.com/bkayser/NewRelicR`
 
-## References
 
-Some articles, books, blogs, etc.
 

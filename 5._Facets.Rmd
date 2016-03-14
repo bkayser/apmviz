@@ -1,5 +1,5 @@
 ---
-title: "Spark Charts"
+title: "Faceted Views"
 author: "Bill Kayser"
 date: "March 7, 2016"
 output: 

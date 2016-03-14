@@ -1,5 +1,5 @@
 ---
-title: "APM Data and Visualization"
+title: "Great Wide Open '16"
 runtime: shiny
 author: "Bill Kayser"
 date: "February 16, 2016"
@@ -60,7 +60,7 @@ radioButtons('bp', NULL, c(Scatterplot='scatter',Boxplot='boxplot'))
 
 ```
 
-```{r, child='5._Spark_Charts.Rmd'}
+```{r, child='5._Facets.Rmd'}
 ```
 
 
@@ -92,13 +92,25 @@ Plots of throughput on the X axis and latency on the Y axis.
 
 Show Ward's video
 
-## Data Science and APM {.build .smaller}
+## Summary - Monitoring Latency {.build .smaller}
 
-> * Quality visualizations give us greater visibility into the data.
-> * Applying principles froms data science improves the fidelity of data and lowers the cost of acquisition.
-> * Use both if you want to know your application
+### When you can collect event level data
+* Use Scatterplots for deep visibility
+* Use Median, Inner Quartiles for plots and sparkcharts
+* Use histograms to identify multi-modal behavior
+* Collect multiple dimensions for faceted views when possible
 
-# Thanks...
+### When space is a premium
+* Be careful using the mean
+* Use Geometric Mean to approximate the median
+* Use Geometric Standard Deviation to approximate inner quartile regions
+* Use Apdex for monitoring the quality of the customer experience
+
+### Consider alternate visualizations
+* Density Filaments
+* Rugplots
+* Animation
+
 
 ## Bill Kayser
 

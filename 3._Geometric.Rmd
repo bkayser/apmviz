@@ -1,0 +1,211 @@
+---
+title: "Geometric"
+author: "Bill Kayser"
+date: "March 3, 2016"
+runtime: shiny
+output: 
+  ioslides_presentation: 
+    css: ./styles.css
+    keep_md: no
+    logo: images/logo_text.png
+    smaller: yes
+    widescreen: yes
+---
+
+# Histograms
+
+```{r init_gsd, echo=F, message=F, warning=F}
+source('init.R')
+```
+
+## Multi-modal Histograms
+
+```{r}
+
+mmdata <- read_transactions('./data/timeseries/supplychain.rds', 'frontend')
+mm_g <- ggplot(mmdata$events, aes(x=value)) + xlim(0, ex1$xlimit) +
+    my_plot_theme +
+    theme(legend.position='none') +
+    geom_histogram(bins=120, position='dodge')
+mm_g 
+
+```
+
+## Multi-modal Histograms
+
+```{r}
+mm_g + 
+    aes(fill=transaction) +
+    facet_grid(transaction ~ ., scales='free_y') 
+```
+
+## Multi-modal Histograms
+
+```{r}
+mm_g + aes(fill=transaction)
+```
+
+## Histogram Example
+
+```{r}
+hex <- read_transactions('./data/timeseries/storefront-deploy.rds', 'frontend')
+xmax <- quantile(hex$events$value, 0.95)
+g_h <- ggplot(hex$events) +
+    aes(x=value) +
+    geom_histogram(bins=200, fill='#aaaaaa') +
+    xlim(0, xmax) +
+    my_plot_theme+
+    scale_color_manual(values=c(lognormal='red',gamma='blue'), name=NULL) +
+    xlab('X - Latency') + ylab('Number of Requests')
+
+g_h
+
+```
+
+## Gamma Distribution Approximation
+
+```{r}
+x <- seq(1, round(xmax), by=20)
+y <- dgamma(x/160, shape=3, scale=3)
+g_data <- data.frame(x=x, y=0.28 * nrow(hex$events)*y)
+
+g_h + geom_line(data=g_data, aes(x=x, y=y, color='gamma'), size=2, show.legend=T) 
+
+```
+
+## Log Normal Approximation
+
+```{r}
+gmean <- mean(log(hex$events$value))
+gsd <- sd(log(hex$events$value))
+y <- 70 * nrow(hex$events) * (exp(dlnorm(x, gmean, gsd)) - 1)
+ln_data <- data.frame(x=x, y=y)
+
+g_h + geom_line(data=ln_data, aes(x=x, y=y, color='lognormal'), size=2, show.legend = T) 
+#geom_line(data=g_data, aes(x=x, y=y, color='gamma'), size=1.2, show.legend=T)
+
+```
+
+## Response times in log space
+
+You can transform the data into log space to remove the skew:
+
+$$ L = log(X) $$
+
+where $X$ is the population of requests in some given time period, and $L$ is the
+population in log space.
+
+## Response times in log space
+
+```{r, cache=F}
+
+bars <- data.frame(mean=gmean*exp(gmean)/2, 
+                   median=median(log(hex$events$value))*exp(gmean)/2)
+
+
+sidebarLayout(
+    sidebarPanel(checkboxInput("show_mean.1", label = " mean ", F),
+        checkboxInput("show_median.1", label = " median ", F)),
+    mainPanel(
+        renderPlot({
+    g_log <- ggplot(hex$events) +
+        aes(x=log(value)*exp(gmean)/2) +
+        geom_histogram(bins=200, fill='#aaaaaa') +
+        xlim(0, xmax) +
+        my_plot_theme +
+        summary_colorscale +
+        summary_linescale +
+        xlab('log(X) - Latency') + ylab('Number of Requests')
+    if (input$show_mean.1) {
+        g_log <- g_log + geom_vline(data=bars,
+                                        aes(linetype='gmean', 
+                                            xintercept=mean,
+                                            color='gmean'), size=1.5)
+    }
+    if (input$show_median.1) {
+        g_log <- g_log + geom_vline(data=bars,
+                                    aes(xintercept=median, 
+                                        linetype='median',
+                                        color='median'), size=1.5)
+    }
+    g_log
+})
+    )
+)
+
+
+```
+
+## 
+
+```{r, cache=F}
+chart1 <- histogram_demo('./data/timeseries/news-site.rds', 'backend')
+chart2 <- histogram_demo('./data/timeseries/storefront-deploy.rds', 'backend')
+chart3 <- histogram_demo('./data/timeseries/by-client.rds', 'frontend')
+chart4 <- histogram_demo('./data/timeseries/by-client-60m.rds', 'backend')
+chart5 <- histogram_demo('./data/timeseries/storefront-deploy.rds', 'frontend')
+
+sidebarLayout(
+    sidebarPanel(
+        checkboxInput("in_logspace", label = " Log transform ", F),
+        checkboxInput("show_gmean", label = " Mean ", F), 
+        checkboxInput("show_median", label = " Median ", F),
+        checkboxInput("show_quartile_est", label = " Quartiles (est)", F), 
+        checkboxInput("show_quartile_act", label = " Quartiles (actual)", F)),
+    mainPanel(
+        renderPlot({ 
+            multiplot(chart1$hist(input), chart2$hist(input), chart3$hist(input), chart4$hist(input),
+                      cols=1)
+        })))
+
+```
+
+##
+
+```{r echo = FALSE, cache=F, message=F}
+sidebarLayout(
+    sidebarPanel(
+        checkboxInput("scatterplot", label = " Scatterplot ", T),
+        checkboxInput("scatter_mean", label = " Mean ", F),
+        checkboxInput("scatter_gmean", label = " Geometric Mean ", F), 
+        checkboxInput("scatter_quartiles_est", label = " Estimated Quartiles ", F)
+    ),
+    mainPanel(
+        renderPlot({ 
+            multiplot(cols=1,
+                       chart5$scatterplot(input),
+                       chart3$scatterplot(input))
+        })
+    )
+)
+
+```
+
+## Calculating GM and GSD {#gsd}
+
+### Geometric Mean
+
+Instead of collecting the sum of the response times, you collect the sum of the
+_log_ of the response times:
+
+$GM = exp\left(\frac1n\sum_{i=1}^n ln(t_i)\right)$
+
+### Geometric Standard Deviation
+
+Instead of collecting the sum of squares to calculate the standard deviations, you collect the
+sum of the squared log of response times:
+
+$GSD = exp\left(\sqrt{\frac1n\sum_{i=1}^nln(t_i)^2-\left(\frac1n\sum_{i=1}^nln(t_i)\right)^2}\right)$
+
+### Inner Quartile Interval Estimate
+
+$\left[\frac{GM}{GSD^Z}\dotsb GM\times GSD^Z\right]$
+
+...where $z = 0.674$ from the Standard Normal Distribution.
+
+## Cost/Benefit - Geometric mean and median {.cvb}
+
+```{r, fig.width=10, fig.height=6}
+cvb <- cvb_add(cvb, 'Geometric Mean\nGeometric StdDev', Efficiency=8, Value=4.5)
+cvb_plot(cvb)
+```

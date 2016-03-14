@@ -1,0 +1,60 @@
+---
+title: "Histograms"
+runtime: shiny
+author: "Bill Kayser"
+date: "February 16, 2016"
+output: 
+  ioslides_presentation: 
+    keep_md: yes
+    logo: images/logo_text.png
+    smaller: yes
+    widescreen: yes
+    css: './styles.css'
+
+---
+```{r, echo=F, message=F, warning=F}
+
+library(ggplot2)
+source('apm_utils/init.R')
+source('apm_utils/interactive.R')
+```
+
+
+## 
+
+```{r echo = FALSE, cache=F, message=F}
+chart1 <- histogram_demo('./data/timeseries/news-site.rds', 'backend')
+chart2 <- histogram_demo('./data/timeseries/storefront-deploy.rds', 'backend')
+chart3 <- histogram_demo('./data/timeseries/by-client-60m.rds', 'backend')
+chart4 <- histogram_demo('./data/timeseries/by-client-slow-safari.rds', 'backend')
+renderPlot({ 
+    multiplot(chart1$hist(input), chart2$hist(input), chart3$hist(input), chart4$hist(input),
+              cols=2)
+    })
+```
+
+```{r echo = FALSE, message=F, warning=F, cache=F}
+fillRow(checkboxInput("in_logspace", label = " Log transform ", F),
+           checkboxInput("show_gmean", label = " Mean ", F), 
+           checkboxInput("show_median", label = " Median ", F),
+           checkboxInput("show_quartile_est", label = " Quartiles (est)", F), 
+           checkboxInput("show_quartile_act", label = " Quartiles (actual)", F)) 
+```
+
+##
+
+```{r echo = FALSE, cache=F, message=F}
+renderPlot({ 
+#    multiplot(chart1$scatterplot(input), chart2$scatterplot(input), chart3$scatterplot(input),
+#              chart4$scatterplot(input),
+#              cols=2)
+    chart1$scatterplot(input)
+    })
+```
+
+```{r echo = FALSE, message=F, warning=F, cache=F}
+flowLayout(checkboxInput("scatterplot", label = " Scatterplot ", T),
+           checkboxInput("scatter_gmean", label = " Geometric Mean ", F), 
+           checkboxInput("scatter_quartiles_est", label = " Estimated Quartiles ", F))
+```
+

@@ -1,0 +1,114 @@
+---
+title: "APM Data and Visualization"
+runtime: shiny
+author: "Bill Kayser"
+date: "February 16, 2016"
+output: 
+  ioslides_presentation: 
+    css: ./styles.css
+    keep_md: yes
+    logo: images/logo_text.png
+    smaller: yes
+    widescreen: yes
+---
+```{r init, echo=F, message=F, warning=F}
+source('init.R')
+```
+
+# In Graphic Detail | Data Science in Application Performance Management
+
+Bill Kayser
+
+Distinguished Engineer, New Relic
+
+March 14, 2016
+
+
+```{r, child='1._Intro.Rmd'}
+```
+
+```{r, child='2._Simple_Stats.Rmd'}
+```
+
+```{r, child='3._Geometric.Rmd'}
+```
+
+```{r, child='4._Apdex.Rmd'}
+```
+
+
+## Review - Summary Values
+
+* For response time charts use geometric mean for an inexpensive measure.
+* Forget the standard deviation, use the geometric standard deviation.
+* For counts, throughput, use mean.
+* Use Apdex for a user-centered metric.
+
+# Additional Visualizations
+
+## Box Plots
+
+```{r boxplots, cache=F}
+ex5 <- read_transactions('./data/timeseries/news-site.rds', 'backend')
+boxplot <- mixed_charts(ex5)
+
+renderPlot({
+  boxplot(input)
+})
+
+radioButtons('bp', NULL, c(Scatterplot='scatter',Boxplot='boxplot'))
+
+```
+
+```{r, child='5._Spark_Charts.Rmd'}
+```
+
+
+## Throughput vs Response Time
+
+```{r t_vs_rt}
+
+files <- list.files('./data/scalability', '*.rds', full.names = T)
+scalability_chart <- function(file) {
+    df <- readRDS(file)
+    ggplot(df) +
+        aes(x=count, y=average) +
+        geom_point(aes(color=hour),size=3, alpha=0.8)  +
+        #geom_smooth() +
+        scale_color_manual(values=div_gradient_pal(low='#007700', mid='#00FFFF', high='#992222')(seq(0, 1, length.out = 24))) +
+        my_plot_theme + 
+        theme(legend.position='none', text=element_blank(),
+              panel.border=element_rect(fill=NA))
+}
+
+charts <- lapply(files, scalability_chart)
+multiplot(plotlist=charts, cols=3)
+    
+```
+
+Plots of throughput on the X axis and latency on the Y axis.
+
+## Animation
+
+Show Ward's video
+
+## Data Science and APM {.build .smaller}
+
+> * Quality visualizations give us greater visibility into the data.
+> * Applying principles froms data science improves the fidelity of data and lowers the cost of acquisition.
+> * Use both if you want to know your application
+
+# Thanks...
+
+## Bill Kayser
+
+* @bravoking
+* `github.com/bkayser`
+* This talk: `github.com/bkayser/apmds`
+* New Relic: www.newrelic.com
+* R Library for getting New Relic Data: `github.com/bkayser/NewRelicR`
+
+## References
+
+Some articles, books, blogs, etc.
+

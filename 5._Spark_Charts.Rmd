@@ -1,0 +1,154 @@
+---
+title: "Spark Charts"
+author: "Bill Kayser"
+date: "March 7, 2016"
+output: 
+  ioslides_presentation: 
+    css: ./styles.css
+    keep_md: no
+    logo: images/logo_text.png
+    smaller: yes
+    widescreen: yes
+---
+
+## Faceted Views
+
+```{r init_sc, echo=F, message=F, warning=F}
+source('init.R')
+```
+
+* Looking at collection of related things
+    * Cluster of servers
+    * Application server nodes
+    * Pages in an application
+    * Response times broken down by browser
+    
+## Sparklines - Mean
+
+```{r}
+ex <- read_transactions('./data/timeseries/by_shard.rds', 'backend', 'shard', 8)
+
+plotlines <- dcast(ex$plotlines, name + timestamp ~ measure, drop=F)
+plotlines[is.na(plotlines$mean),'mean'] <- 0
+
+z=qnorm(0.75)
+max_t = quantile(ex$events$value, 0.95)
+
+```
+
+```{r}
+ggplot(plotlines) +
+    aes(x=timestamp, y=mean) +
+    geom_line(aes(color='mean', linetype='mean', linejoin='round')) +
+    blank_theme +
+    theme(panel.background=element_rect(fill='#EEEEEE')) +
+    summary_colorscale + summary_linescale +
+    facet_grid(name ~ .) 
+    
+```
+
+## Sparklines - Filled
+
+```{r}
+ggplot(plotlines) +
+    aes(x=timestamp, y=mean) +
+    geom_area(fill=region_fill, color='black') +
+    blank_theme +
+#    theme(panel.background=element_rect(fill='#EEEEEE')) +
+    summary_colorscale + summary_linescale +
+    facet_grid(name ~ .) 
+    
+```
+
+## Sparklines - Inner Quartiles (est.)
+
+```{r}
+ggplot(plotlines) +
+    aes(x=timestamp, ymax=gmean*(gsd^z),
+        ymin=gmean/(gsd^z)) +
+    geom_ribbon(fill=region_fill) +
+    blank_theme +
+    theme(panel.background=element_rect(fill='#EEEEEE')) +
+    summary_colorscale + summary_linescale +
+    facet_grid(name ~ .) #, scales='free_y') 
+```
+
+
+## Sparklines - Inner Quartiles, Free Y Axis
+
+```{r}
+ggplot(plotlines) +
+    aes(x=timestamp, ymax=gmean*(gsd^z),
+        ymin=gmean/(gsd^z)) +
+    geom_ribbon(fill=region_fill) +
+    blank_theme +
+    theme(panel.background=element_rect(fill='#EEEEEE')) +
+    summary_colorscale + summary_linescale +
+    facet_grid(name ~ ., scales='free_y') 
+
+```
+
+## Sparklines - Horizon Plots
+
+```{r}
+
+hdata <- horizon_data(ex,n=4)
+
+ggplot(hdata$df) +
+    aes(x=timestamp, y=mean, fill=horizon) +
+    scale_fill_brewer(palette='GnBu')+
+    geom_area(position='identity', color='#999999') +
+    geom_hline(aes(yintercept=hdata$horizon)) +
+    geom_hline(aes(yintercept=0)) +    
+    summary_colorscale + summary_linescale  +
+    blank_theme +
+#    theme(panel.background=element_rect(fill='#EEEEEE')) +
+    facet_grid(name ~ ., scales='free_y') 
+
+```
+
+## Sparklines - Frequency Plots
+
+```{r}
+# ggplot(filter(events, value < max_t)) +
+ggplot(filter(ex$events, value < max_t)) +
+    aes(x=value) +
+    geom_histogram(fill='#333333', bins=min(200, max_t)) +
+    blank_theme +
+    theme(panel.background=element_rect(fill='#EEEEEE')) +
+    facet_grid(name ~ ., scales='free_y')
+
+```
+
+## Sparklines - Frequency + Rug
+
+```{r}
+ggplot(filter(ex$events, value < max_t)) +
+    aes(x=value) +
+    geom_histogram(fill='#333333', bins=min(200, max_t)) +
+    blank_theme +
+    theme(panel.background=element_rect(fill='#EEEEEE')) +
+    facet_grid(name ~ ., scales='free_y') +
+    geom_rug(sides='b')
+
+```
+
+## Sparklines - Density Filaments
+
+```{r}
+freq <- lapply(split(ex$events, ex$events$name), function(df) {
+    d <- density(df$value, from=0, to=max_t)
+    data.frame(t=d$x, d=d$y, name=df$name[1], stringsAsFactors = F)
+}) %>% bind_rows %>% 
+    tbl_df %>%
+    mutate(name=as.factor(name))
+
+ggplot(freq) +
+    aes(x=t,y=1) +
+    geom_raster(aes(fill=sqrt(d))) +
+    scale_fill_continuous(low='#DDFFDD', high='#FF1111') +
+    blank_theme +
+    theme(panel.background=element_rect(fill='#EEEEEE')) +
+    geom_vline(aes(xintercept=median), size=2, color='#666666', data=ex$summary) +
+    facet_grid(name ~ ., scales='free_y')
+```

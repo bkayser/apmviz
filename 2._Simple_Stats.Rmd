@@ -1,0 +1,257 @@
+---
+title: "Simple Stats"
+author: "Bill Kayser"
+date: "March 3, 2016"
+output: 
+  ioslides_presentation: 
+    css: ./styles.css
+    keep_md: no
+    logo: images/logo_text.png
+    smaller: yes
+    widescreen: yes
+---
+
+# In Graphic Detail | Data Science and APM
+
+```{r init_ss, echo=F, message=F, warning=F}
+source('init.R')
+```
+
+## Data Science and Data Visualization
+
+<img class='graphic tall' src='images/CCSCvsPTFC-stats.png'/>
+
+## Data Science and Data Visualization
+
+<img class='graphic tall' src='images/CCSCvsPTFC-defpasses.png'/>
+
+
+## Cost of Statistics
+
+* Can it be aggregated and resampled using a closed form expression?
+    * $min()$, $max()$
+    * Mean: $\bar{x} = \frac{1}{n}\sum_{i=0}^n x_i$ where $x_i$ is the measure of transaction $i$
+    * Standard Deviation: $\sigma = \sqrt{\frac{\sum_{i=0}^n x_i^2 - n\bar x }{n - 1}}$
+* Is it necessary to retain the raw measures?  Iterate over the timeseries?
+    * Histograms
+    * Median, Percentile
+    * Scatterplots
+
+To track the mean and standard deviation, just sum the number of transactions, the total response time, and the square of the total response time.
+
+
+## Cost/Benefit Grid {.cvb}
+
+```{r, fig.width=10, fig.height=6}
+cvb_plot(cvb) +
+    geom_tile(aes(x=7.5, y=7.5, width=4, height=4), 
+              fill='#33FF33', alpha=0.2) +
+    geom_text(aes(x=7.5, y=7.5), size=14,
+              label="Sweet Spot") +
+    geom_tile(aes(x=2.5, y=2.5, width=4, height=4), 
+              fill='#FF3333', alpha=0.2) +
+    geom_text(aes(x=2.5, y=2.5), size=12,
+              label="Poor Return")
+
+```
+
+## Cost/Benefit - Mean Statistic {.cvb}
+
+```{r, fig.width=10, fig.height=6}
+cvb <- cvb_add(cvb, 'Mean', Efficiency=9, 2)
+cvb_plot(cvb) +
+    geom_tile(aes(x=7.5, y=7.5, width=4, height=4), 
+              fill='#33FF33', alpha=0.2) +
+    geom_text(aes(x=7.5, y=7.5), size=14,
+              label="Sweet Spot") +
+    geom_tile(aes(x=2.5, y=2.5, width=4, height=4), 
+              fill='#FF3333', alpha=0.2) +
+    geom_text(aes(x=2.5, y=2.5), size=12,
+              label="Poor Return")
+
+```
+
+## Cost/Benefit - Scatterplot of Every Request  {.cvb}
+
+```{r, fig.width=10, fig.height=6}
+cvb <- cvb_add(cvb, 'Scatterplot', Efficiency=1.5, Value=9.5)
+cvb_plot(cvb) +
+    geom_tile(aes(x=7.5, y=7.5, width=4, height=4), 
+              fill='#33FF33', alpha=0.2) +
+    geom_text(aes(x=7.5, y=7.5), size=14,
+              label="Sweet Spot") +
+    geom_tile(aes(x=2.5, y=2.5, width=4, height=4), 
+              fill='#FF3333', alpha=0.2) +
+    geom_text(aes(x=2.5, y=2.5), size=12,
+              label="Poor Return")
+
+```
+
+## Cost/Benefit - Histograms
+
+```{r}
+ex1 <- read_transactions('./data/timeseries/supplychain.rds', 'frontend')
+ggplot(ex1$events, aes(x=value)) + xlim(0, ex1$xlimit) +
+    geom_histogram(aes(fill=transaction), bins=120, position='dodge') +
+    my_plot_theme +
+    summary_colorscale +
+    summary_linescale +
+   legend_right +
+    theme(legend.position='none')
+
+```
+
+
+## Cost/Benefit - Histograms {.cvb}
+
+```{r, fig.width=10, fig.height=6}
+cvb <- cvb_add(cvb, 'Histogram', Efficiency=3.5, Value=8)
+cvb_plot(cvb)
+```
+
+
+## Can we make use of the Standard Deviation?
+
+```{r}
+set.seed(100)
+sample <- rnorm(10000,100, 40)
+ymax <- 320
+
+sample_summary <- data.frame(Measure=c('mean', 'median', 'q25', 'q75'),
+                             V=c(mean(sample),
+                                 median(sample),
+                                 quantile(sample, 0.25),
+                                 quantile(sample, 0.75)))
+sample_sd <- sd(sample)
+
+g_normal <- ggplot(data.frame(t=sample)) +
+    aes(t) +
+    geom_histogram(bins=120, fill='#CCCCCC') +
+    geom_vline(data=sample_summary, aes(xintercept=V, color=Measure, linetype=Measure), size=1.2) +
+    summary_colorscale + summary_linescale +
+    my_plot_theme +
+    coord_cartesian(xlim=c(0,240), ylim=c(0,ymax)) +
+    legend_right
+
+g_normal
+```
+
+## Estimating Quartiles using Standard Deviation
+
+```{r}
+m <- mean(sample)
+
+z <- qnorm(p=0.75)
+
+estIQ <- data.frame(z67=c(m-sample_sd*z, m+sample_sd*z))
+
+g_est_quartiles <- g_normal + 
+    geom_rect(data=estIQ,
+              aes(xmin=min(z67),
+                  xmax=max(z67)),
+              inherit.aes = F,
+              ymax=ymax,
+              ymin=0,
+              fill='red',
+              alpha=0.1) +
+    geom_vline(data=estIQ,
+               aes(xintercept=z67),
+               size=1.5, color='black', linetype='dotted') 
+
+g_est_quartiles
+
+```
+
+## Estimating Quartiles using Standard Deviation
+
+If response times had a normal distribution we could show everything using
+simple statistics and estimated percentiles:
+
+```{r}
+sample_t <- data.frame(t=100+sample, x=1:100)
+sample_summary <- group_by(sample_t, x) %>%
+    summarize(mean=mean(t), q25_est=mean-(z*sd(t)),
+              q75_est=mean+(z*sd(t)))
+    
+ggplot(sample_summary) +
+    aes(x=x, ymin=q25_est, ymax=q75_est, y=mean) +
+    geom_ribbon(aes(color='q75',
+                    linetype='q75'),
+                fill=region_fill,
+                alpha=0.8,
+                size=1.5) +
+    geom_point(data=sample_t, inherit.aes=F, aes(x=x,y=t), alpha=0.2) + 
+    summary_colorscale + summary_linescale +
+    my_plot_theme +
+    theme(legend.position='none')
+```
+
+## Estimating Quartiles
+
+Summary Statistics Don't Work on Non-Gassian Data
+
+```{r}
+est_band <- dcast(ex1$plotlines, timestamp ~ measure)
+g_scatter <- scatterplot(ex1)
+g_scatter +
+    geom_ribbon(data=est_band, inherit.aes = F,
+                aes(x=timestamp,
+                    ymax=q75_est,
+                    ymin=q25_est),
+                fill=region_fill,
+                alpha=0.4) +
+    geom_line(data=filter(ex1$plotlines, measure %in% c('q25', 'q75')), 
+              aes(x=timestamp, y=value, color=measure, linetype=measure),
+              size=1.5) +
+    summary_colorscale + summary_linescale +
+    theme(legend.position = "top",
+          legend.key.width=unit(2, 'cm')) +
+        theme(legend.position='none')
+
+
+```
+
+## Cost/Benefit - Standard Deviation {.cvb}
+
+```{r, fig.width=10, fig.height=6}
+cvb <- cvb_add(cvb, 'Std. Dev.', Efficiency=8.5, Value=1)
+cvb_plot(cvb)
+```
+
+## Mean vs Median | Non-gaussian distributions
+
+```{r, cache=T}
+#minimalist_theme <-  theme_blank()theme(legend.position = 'none', text=element_blank())
+ex <- read_transactions('./data/timeseries/supplychain.rds', 'frontend')
+add_plotlines(scatterplot(ex), ex) + blank_theme
+
+```
+
+## Mean vs Median | Non-gaussian distributions
+
+```{r, cache=T}
+ex <- read_transactions('./data/timeseries/microservice.rds', 'duration')
+add_plotlines(scatterplot(ex), ex)  + blank_theme
+```
+
+## Mean vs Median | Non-gaussian distributions
+
+```{r, cache=T}
+ex <- read_transactions('./data/timeseries/storefront-interrupt.rds', 'backend')
+add_plotlines(scatterplot(ex), ex) + blank_theme
+```
+
+## Mean vs Median | Non-gaussian distributions
+```{r, cache=T}
+ex <- read_transactions('./data/timeseries/news-site.rds', 'frontend')
+add_plotlines(scatterplot(ex), ex)  + blank_theme
+
+```
+
+## Cost/Benefit - Median {.cvb}
+
+```{r, fig.width=10, fig.height=6}
+cvb <- cvb_add(cvb, 'Median/Percentiles', Efficiency=4, Value=6.5)
+cvb_plot(cvb)
+```
+

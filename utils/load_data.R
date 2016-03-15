@@ -42,7 +42,7 @@ read_transactions <- function(filename, value_column, facet=NULL, limit=NULL, ap
         p <- 5
         u <- 'min'
     }
-    period <- period(p, u)
+    period <- as.numeric(period(p, u), units='min')
     histogram_xlimit <- quantile(events$value, 0.96)
     timeseries_ylimit <- quantile(events$value, 0.94)
     

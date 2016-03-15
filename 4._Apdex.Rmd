@@ -117,6 +117,6 @@ ggplot(plotdata) +
 ## Cost/Benefit - Apdex {.cvb}
 
 ```{r, fig.width=10, fig.height=6}
-cvb <- cvb_add(cvb, 'Apdex', Efficiency=7, Value=5.5)
+cvb <- cvb_add(cvb, 'Apdex', Efficiency=7, Value=6)
 cvb_plot(cvb)
 ```

@@ -17,23 +17,57 @@ output:
 source('init.R')
 ```
 
-* Does it help us measure variation over time?
+* Does it quantify something we care about?
 * Does it give us a qualitative assessment of the current status?
 * Does it help us measure differences across similar things, like applications or servers?
 * Does it help us identify trends and anomalies?
 * Does it reveal underlying patterns or relationships in the data?
 
-## Estimating the efficiency | How cheaply can we collect the data
+## Estimating the efficiency
+
+How cheaply can we collect the data?
 
 * Is space or bandwidth a premium?
-* Can it be aggregated and resampled using a closed form expression?
-    * $min()$, $max()$
-    * Mean: $\bar{x} = \frac{1}{n}\sum_{i=0}^n x_i$ where $x_i$ is the measure of transaction $i$
-    * Standard Deviation: $\sigma = \sqrt{\frac{\sum_{i=0}^n x_i^2 - n\bar x }{n - 1}}$
-* Is it necessary to retain the raw measures?  Iterate over the timeseries?
-    * Histograms
-    * Median, Percentile
-    * Scatterplots
+* Can it be reduced by combining values into a single value?
+* Or do we have to store every measurement?
+
+The smaller the data the more things you can measure
+
+## Reducing data
+
+Can you reduce your measurement in X, $x_1 .. x_n$, by combining values using a reduce function, $f(a,b)$?
+
+$$ X_{ab} = f(a, b)$$
+$$ X_{cd} = f(c, d)$$
+$$ X_{abcd} = f(X_{ab}, X_{cd})$$
+
+Space required grows linear with length of history; a simple time series
+
+>* $min(X) = min\left(min(x_1, x_2), min(x_3, x_4), ... min(x_{n-1}, x_n)\right)$
+>* Sum: $\sum_{i=1}^n x_i = (x_1 + x_2) + (x_3 + x_4) +...(x_{n-1} + x_n)$ 
+>* Mean: $\bar{x} = \frac{1}{n}\sum_{i=0}^n x_i$ 
+>* Standard Deviation: $\sigma = \sqrt{\frac{\sum_{i=0}^n x_i^2 - n\bar x }{n - 1}}$
+
+## Hard to reduce data
+
+Examples:
+* Histograms (keep N buckets for each time period)
+* Median, Percentile 
+
+Keeping a large vector of buckets:
+
+* Linear with length of history but also the granularity of the data
+* Keep N buckets for each time period
+
+## Irreducible data
+
+Examples:
+* Scatterplots
+* Replays
+
+Keeping a complete history of every measurement
+
+Space proportional to the number of measures
 
 
 ## Cost/Benefit Grid {.cvb}

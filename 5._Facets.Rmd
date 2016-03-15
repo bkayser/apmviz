@@ -11,6 +11,8 @@ output:
     widescreen: yes
 ---
 
+# Additional Visualizations
+
 ## Faceted Views
 
 ```{r init_sc, echo=F, message=F, warning=F}
@@ -42,20 +44,7 @@ ggplot(plotlines) +
     aes(x=timestamp, y=mean) +
     geom_line(aes(color='mean', linetype='mean', linejoin='round')) +
     blank_theme +
-    theme(panel.background=element_rect(fill='#EEEEEE')) +
-    summary_colorscale + summary_linescale +
-    facet_grid(name ~ .) 
-    
-```
-
-## Sparklines - Filled
-
-```{r}
-ggplot(plotlines) +
-    aes(x=timestamp, y=mean) +
-    geom_area(fill=region_fill, color='black') +
-    blank_theme +
-#    theme(panel.background=element_rect(fill='#EEEEEE')) +
+    theme(panel.background=element_rect(fill='#F3F3F3')) +
     summary_colorscale + summary_linescale +
     facet_grid(name ~ .) 
     
@@ -67,9 +56,9 @@ ggplot(plotlines) +
 ggplot(plotlines) +
     aes(x=timestamp, ymax=gmean*(gsd^z),
         ymin=gmean/(gsd^z)) +
-    geom_ribbon(fill=region_fill) +
+    geom_ribbon(fill=region_fill, color=NA) +
     blank_theme +
-    theme(panel.background=element_rect(fill='#EEEEEE')) +
+    theme(panel.background=element_rect(fill='#F3F3F3')) +
     summary_colorscale + summary_linescale +
     facet_grid(name ~ .) #, scales='free_y') 
 ```
@@ -83,7 +72,7 @@ ggplot(plotlines) +
         ymin=gmean/(gsd^z)) +
     geom_ribbon(fill=region_fill) +
     blank_theme +
-    theme(panel.background=element_rect(fill='#EEEEEE')) +
+    theme(panel.background=element_rect(fill='#F3F3F3')) +
     summary_colorscale + summary_linescale +
     facet_grid(name ~ ., scales='free_y') 
 
@@ -98,12 +87,11 @@ hdata <- horizon_data(ex,n=4)
 ggplot(hdata$df) +
     aes(x=timestamp, y=mean, fill=horizon) +
     scale_fill_brewer(palette='GnBu')+
-    geom_area(position='identity', color='#999999') +
+    geom_area(position='identity', color='#AAAAAA') +
     geom_hline(aes(yintercept=hdata$horizon)) +
     geom_hline(aes(yintercept=0)) +    
     summary_colorscale + summary_linescale  +
     blank_theme +
-#    theme(panel.background=element_rect(fill='#EEEEEE')) +
     facet_grid(name ~ ., scales='free_y') 
 
 ```

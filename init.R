@@ -1,4 +1,4 @@
-
+# Loaded once for the presentation--loads in all dependencies and R utilities.
 library(ggplot2)
 library(dplyr)
 library(stringi)
@@ -12,7 +12,6 @@ source('utils/plots.R')
 source('utils/interactive.R')
 source('utils/horizon.R')
 
-
 knitr::opts_chunk$set(fig.width=9, fig.height=4.5,
                       echo=F, 
                       cache=F,
@@ -25,8 +24,6 @@ if (!exists('cvb')) {
 }
 
 if (!exists('microservice')) {
-#  ex1 <- read_transactions('./data/raw/short-tall-spike.rds', 'backend')  
-#    ex1 <- read_transactions('./data/raw/staging_transactions_56.rds', 'db')
     microservice <- read_transactions('./data/timeseries/microservice.rds', 'duration')
 } 
 

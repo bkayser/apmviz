@@ -86,7 +86,7 @@ empty_cvb <- function() {
 
 # Get a dataframe with columns 'Name', 'Cost', 'Value', 'Notice'
 # where Notice is a boolean indicating the entry should be highlighted.
-cvb_plot <- function(cvb) {
+cvb_plot <- function(cvb, scale=1) {
     ggplot(cvb) + 
         xlim(c(0,10)) + ylim(c(0,10)) +
         geom_label(aes(x=Efficiency, y=Value,
@@ -99,14 +99,14 @@ cvb_plot <- function(cvb) {
                    label.padding=unit(0.6, 'lines')) +
         scale_fill_manual(values=c('FALSE'='#DDDDDD','TRUE'='#CCFFCC')) +
         scale_color_manual(values=c('FALSE'='black', 'TRUE'='red')) +
-        scale_size_manual(values=c('FALSE'=6, 'TRUE'=10)) +
-        geom_segment(aes(x=1, y=0, xend=10, yend=0), arrow=arrow(), color='red', size=1.4) +
-        geom_segment(aes(x=0, y=1, xend=0, yend=10), arrow=arrow(), color='darkgreen', size=1.4) +
+        scale_size_manual(values=c('FALSE'=6*scale, 'TRUE'=10*scale)) +
+        geom_segment(aes(x=1, y=0, xend=10, yend=0), arrow=arrow(), color='red', size=1.4*scale) +
+        geom_segment(aes(x=0, y=1, xend=0, yend=10), arrow=arrow(), color='darkgreen', size=1.4*scale) +
         #ggtitle("APM Statistics: Cost vs Value") +
         theme(line=element_blank(),
               axis.text=element_blank(),
               rect=element_blank(),
-              text=element_text(size=28),
+              text=element_text(size=28*scale),
               legend.position='None')
 }
 

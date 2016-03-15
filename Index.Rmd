@@ -1,8 +1,8 @@
 ---
-title: "Great Wide Open '16"
+title: "In Graphic Detail"
 runtime: shiny
 author: "Bill Kayser"
-date: "February 16, 2016"
+date: "March, 2016"
 output: 
   ioslides_presentation: 
     css: ./styles.css
@@ -21,7 +21,7 @@ Bill Kayser
 
 Distinguished Engineer, New Relic
 
-March 14, 2016
+March, 2016
 
 
 ```{r, child='1._Intro.Rmd'}
@@ -35,10 +35,6 @@ March 14, 2016
 
 ```{r, child='4._Apdex.Rmd'}
 ```
-
-
-# Additional Visualizations
-
 
 ```{r, child='5._Facets.Rmd'}
 ```
@@ -87,12 +83,23 @@ Plots of throughput on the X axis and latency on the Y axis.  Color is time of d
 
 ## Summary - Monitoring Latency {.build .smaller}
 
-### When you can collect event level data
+<div class="columns-2">
+
+### When space is cheap
 
 * Use Scatterplots for deep visibility
 * Use Median, Inner Quartiles for plots and sparkcharts
 * Use histograms to identify multi-modal behavior
 * Collect multiple dimensions for faceted views when possible
+
+
+```{r, fig.width=4, fig.height=3.5}
+cvb_plot(cvb, scale=0.5)
+```
+
+</div>
+
+## Summary - Monitoring Latency {.build .smaller}
 
 ### When space is a premium
 
@@ -100,8 +107,6 @@ Plots of throughput on the X axis and latency on the Y axis.  Color is time of d
 * Use Geometric Mean to approximate the median
 * Use Geometric Standard Deviation to approximate inner quartile regions
 * Use Apdex for monitoring the quality of the customer experience
-
-## Summary - Monitoring Latency {.build .smaller}
 
 ### Consider alternate visualizations
 
@@ -116,6 +121,4 @@ Plots of throughput on the X axis and latency on the Y axis.  Color is time of d
 * This talk: `github.com/bkayser/apmds`
 * New Relic: www.newrelic.com
 * R Library for getting New Relic Data: `github.com/bkayser/NewRelicR`
-
-
 

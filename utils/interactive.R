@@ -116,6 +116,10 @@ apdex_hist <- function(data) {
     
     ddata <- data.frame(x=dd$x, d=dd$y) %>% filter(x >=0 & x <= limit)
     
+    bucket_colors <- c(Satisfied='green', 
+                       Tolerating='#ffcc33',
+                       Failed='red')
+    
     function(apdex_t) {
         bucketed_data <- mutate(ddata, 
                                 bucket=as.factor(c('Satisfied', 'Tolerating', 'Failed')[findInterval(x, c(apdex_t, 4*apdex_t))+1]))
@@ -123,9 +127,8 @@ apdex_hist <- function(data) {
         g_apdex <- ggplot(bucketed_data) +
             aes(fill=bucket, x=x, y=d) +
             geom_area() +
-            scale_fill_manual(values=c(Satisfied='green', 
-                                       Tolerating='#ffcc33',
-                                       Failed='red'), name=NULL) +
+            scale_fill_manual(values=bucket_colors, name=NULL) +
+            scale_color_manual(values=c(bucket_colors), name=NULL) +
             geom_text(inherit.aes = F, 
                        x=0.6 * limit, 
                        y=0.8 * max(ddata$d), 
@@ -138,7 +141,7 @@ apdex_hist <- function(data) {
                       hjust='left', 
                       vjust='top',
                       label=stri_c(' T = ',apdex_t)) +
-            geom_rug(aes(color=bucket), sides="b") +
+            geom_rug(aes(color=bucket), sides="b", show.legend = F) +
             my_plot_theme +
             theme(legend.position = c(0.7, 0.5), 
                   text=element_text(size=32),
@@ -195,7 +198,7 @@ mixed_charts <- function(data) {
 
 if (F) {
 
-  data <- read_transactions('./data/raw/short-tall-spike.rds', 'backend')
+  data <- read_transactions('./data/timeseries/storefront-deploy.rds', 'frontend')
   
   f <- mixed_charts(data)
   f(list(bp='boxplot'))
@@ -204,7 +207,7 @@ if (F) {
   
   manipulate(f(t), t=slider(100, 2000))
   
-  f(list(apdex_t=500))
+  f(apdex_t=500)
     
   chart <- histogram_demo('./data/raw/ecommerce-normal-activity.rds', 'backend')
      # './data/raw/ecommerce-friday-deploys.rds', 'backend'

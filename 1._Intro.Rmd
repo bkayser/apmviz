@@ -38,7 +38,7 @@ and the way we visualize that data.
 
 <img class='graphic tall' src='./images/apollo_congrats.jpg'/>
 
-## Now what?
+## Now What?
 
 <img class='graphic tall' src='./images/whatsnext.jpg'/>
 
@@ -71,7 +71,7 @@ g_text
 
 <h3 class='center'>All good? </h3>
 
-## Maybe this will help
+## Maybe this will help.
 
 ```{r easy, fig.height=4}
 g_button <- ggplot() + aes(x=0, y=0) + 
@@ -84,12 +84,7 @@ g_button +  geom_text(aes(x=0, y=0), nudge_y=-1, label=rt, size=18, vjust='botto
 
 ```
 
-
-##
-
-<img class='face' src='images/obama-frown.jpg'/>
-
-## Lets look at recent history
+## Lets look at recent history.
 
 ```{r mean}
 summary_plot(filter(microservice$plotlines, measure=='mean')) + ylim(c(0,40))
@@ -125,11 +120,6 @@ multiplot(g_quartiles + theme('legend.position'='none') + ylab('Summary Measures
           g_throughput)
           
 ```
-
-## Are we really getting the information we need?  | What's missing?
-
-<img class='face' src='images/obama-maybe.jpg'/>
-
 
 ## Histograms
 
@@ -188,17 +178,7 @@ multiplot(g_hist_complete + clean_theme,
 (g_scatter <- scatterplot(microservice))
 ```
 
-##
-
-<img class='face' src='images/obama-yes.jpg'/>
-
-<div class="notes">
-A scatterplot with the summary values overlaid
-
-add_plotlines(g_scatter, microservice, c('mean','median', 'q25', 'q75'))
-</div>
-
-## Using Everything at once
+## Using Everything at Once
 
 ```{r everything}
 

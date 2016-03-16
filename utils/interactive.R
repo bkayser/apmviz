@@ -81,6 +81,7 @@ histogram_demo <- function(file, value_field) {
         g <- ggplot(data$events) +
             aes(x=timestamp) +
             coord_cartesian(ylim=c(0,ylimit)) +
+            summary_colorscale + summary_linescale +
             minimal_theme  
         if (input$scatterplot) {
             g <- g + geom_point(aes(y=value), size=0.1, alpha=0.4) 

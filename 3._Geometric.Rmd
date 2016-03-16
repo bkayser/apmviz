@@ -56,7 +56,7 @@ g_h <- ggplot(hex$events) +
     xlim(0, xmax) +
     my_plot_theme+
     scale_color_manual(values=c(lognormal='red',gamma='blue'), name=NULL) +
-    xlab('X - Latency') + ylab('Number of Requests')
+    xlab('X - Latency (ms)') + ylab('Number of Requests') 
 
 g_h
 
@@ -86,53 +86,43 @@ g_h + geom_line(data=ln_data, aes(x=x, y=y, color='lognormal'), size=2, show.leg
 
 ```
 
-## Response times in log space
+## Response Times in Log Space
 
-You can transform the data into log space to remove the skew:
-
-$$ L = log(X) $$
-
-where $X$ is the population of requests in some given time period, and $L$ is the
-population in log space.
-
-## Response times in log space
-
-```{r, cache=F}
+```{r}
 
 bars <- data.frame(mean=gmean*exp(gmean)/2, 
                    median=median(log(hex$events$value))*exp(gmean)/2)
 
+gls <- ggplot(hex$events) +
+    aes(x=log(value)*exp(gmean)/2) +
+    geom_histogram(bins=200, fill='#aaaaaa') +
+    xlim(0, xmax) +
+    my_plot_theme +
+    summary_colorscale +
+    summary_linescale +
+    xlab('log(X) - Latency') + ylab('Number of Requests')
+gls
 
-sidebarLayout(
-    sidebarPanel(checkboxInput("show_mean.1", label = " mean ", F),
-        checkboxInput("show_median.1", label = " median ", F)),
-    mainPanel(
-        renderPlot({
-    g_log <- ggplot(hex$events) +
-        aes(x=log(value)*exp(gmean)/2) +
-        geom_histogram(bins=200, fill='#aaaaaa') +
-        xlim(0, xmax) +
-        my_plot_theme +
-        summary_colorscale +
-        summary_linescale +
-        xlab('log(X) - Latency') + ylab('Number of Requests')
-    if (input$show_mean.1) {
-        g_log <- g_log + geom_vline(data=bars,
-                                        aes(linetype='gmean', 
-                                            xintercept=mean,
-                                            color='gmean'), size=1.5)
-    }
-    if (input$show_median.1) {
-        g_log <- g_log + geom_vline(data=bars,
-                                    aes(xintercept=median, 
-                                        linetype='median',
-                                        color='median'), size=1.5)
-    }
-    g_log
-})
-    )
-)
+```
 
+## Response Times in Log Space
+
+```{r}
+gls <- gls + geom_vline(data=bars,
+                 aes(linetype='gmean', 
+                     xintercept=mean,
+                     color='gmean'), size=1.5)
+gls
+
+```
+
+## Response Times in Log Space
+
+```{r}
+gls + geom_vline(data=bars,
+                 aes(xintercept=median, 
+                     linetype='median',
+                     color='median'), size=1.5)
 
 ```
 
@@ -203,9 +193,9 @@ $\left[\frac{GM}{GSD^Z}\dotsb GM\times GSD^Z\right]$
 
 ...where $z = 0.674$ from the Standard Normal Distribution.
 
-## Cost/Benefit - Geometric mean and median {.cvb}
+## Cost/Benefit - Geometric Mean and Median {.cvb}
 
 ```{r, fig.width=10, fig.height=6}
-cvb <- cvb_add(cvb, 'Geometric Mean\nGeometric StdDev', Efficiency=8, Value=4.5)
+cvb <- cvb_add(cvb, 'Geometric Mean\nGeometric StdDev', Efficiency=8, Value=5.5)
 cvb_plot(cvb)
 ```

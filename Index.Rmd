@@ -43,7 +43,8 @@ March, 2016
 
 ```{r boxplots, cache=F}
 ex5 <- read_transactions('./data/timeseries/news-site.rds', 'backend')
-boxplot <- mixed_charts(ex5)
+  data <- read_transactions('./data/timeseries/storefront-deploy.rds', 'frontend')
+  boxplot <- mixed_charts(data)
 
 renderPlot({
   boxplot(input)
@@ -81,11 +82,11 @@ Plots of throughput on the X axis and latency on the Y axis.  Color is time of d
 
 [Traffic Animation](http://marlowe.datanerd.us/datasets/traffic.html)
 
-## Summary - Monitoring Latency {.build .smaller}
+## Summary - Monitoring Latency {.smaller}
 
 <div class="columns-2">
 
-### When space is cheap
+### When you can collect a lot of data
 
 * Use Scatterplots for deep visibility
 * Use Median, Inner Quartiles for plots and sparkcharts
@@ -95,6 +96,7 @@ Plots of throughput on the X axis and latency on the Y axis.  Color is time of d
 
 ```{r, fig.width=4, fig.height=3.5}
 cvb_plot(cvb, scale=0.5)
+
 ```
 
 </div>
@@ -110,6 +112,7 @@ cvb_plot(cvb, scale=0.5)
 
 ### Consider alternate visualizations
 
+* Throughput vs Response Time Scatterplots
 * Density Filaments
 * Horizon Plots
 * Animation
@@ -117,8 +120,7 @@ cvb_plot(cvb, scale=0.5)
 ## Bill Kayser
 
 * @bravoking
-* `github.com/bkayser`
 * This talk: `github.com/bkayser/apmds`
-* New Relic: www.newrelic.com
 * R Library for getting New Relic Data: `github.com/bkayser/NewRelicR`
+* New Relic: www.newrelic.com
 

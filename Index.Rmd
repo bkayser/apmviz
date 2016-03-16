@@ -111,10 +111,13 @@ cvb_plot(cvb, scale=0.5)
 * Horizon Plots
 * Animation
 
-## Bill Kayser
+## Thanks!
 
-* @bravoking
-* This talk: `github.com/bkayser/apmds`
+Bill Kayser (@bravoking) - www.newrelic.com
+
+* This talk: [github.com/bkayser/apmviz](http://github.com/bkayser/apmviz)
+* D3/Javascript version live demo: http://marlowe.datanerd.us
+* D3/Javascript source: [github.com/newrelic/marlowe](http://github.com/newrelic/marlowe)
 * R Library for getting New Relic Data: `github.com/bkayser/NewRelicR`
-* New Relic: www.newrelic.com
+
 

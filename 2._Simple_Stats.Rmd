@@ -28,10 +28,12 @@ source('init.R')
 How cheaply can we collect the data?
 
 * Is space or bandwidth a premium?
-* Can it be reduced by combining values into a single value?
-* Or do we have to store every measurement?
+* Can it be reduced by combining values into a single value, or do we have to store every measurement?
+* How much screen real estate does it take up?
 
-The smaller the data the more things you can measure
+The smaller the data the more things you can measure.
+
+The less space it takes the more options you have for screen layout.
 
 ## Reducing Data
 

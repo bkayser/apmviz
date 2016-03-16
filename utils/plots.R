@@ -2,15 +2,19 @@
 
 summary_plot <- function(data) {
     ggplot(data) +
-    aes(x=timestamp, y=value, color=measure, linetype=measure) +
-    summary_colorscale + summary_linescale +
-    geom_line() +
-    my_plot_theme
+        aes(x=timestamp, y=value, color=measure, linetype=measure) +
+        ylab('Latency (ms)') +
+        xlab('Time') +
+        summary_colorscale + summary_linescale +
+        geom_line() +
+        my_plot_theme
 }
 
 scatterplot <- function(data) {
     ggplot(data$events) +
         aes(x=timestamp, y=value) +
+        ylab('Latency (ms)') +
+        xlab('Time') +
         geom_point(size=0.2, alpha=0.4) +
         coord_cartesian(ylim=c(0,data$ylimit)) +
         my_plot_theme
@@ -20,6 +24,8 @@ histogram <- function(data) {
     ggplot(data$events) +
         aes(value) +
         geom_histogram(bins=120, fill='#CCCCCC') +
+        xlab('Latency (ms)') +
+        ylab('Number of Requests') +
         summary_colorscale + summary_linescale +
         my_plot_theme +
         legend_right

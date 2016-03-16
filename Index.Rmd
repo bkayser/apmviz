@@ -1,6 +1,5 @@
 ---
 title: "In Graphic Detail"
-runtime: shiny
 author: "Bill Kayser"
 date: "March, 2016"
 output: 
@@ -42,15 +41,9 @@ March, 2016
 ## Box Plots
 
 ```{r boxplots, cache=F}
-ex5 <- read_transactions('./data/timeseries/news-site.rds', 'backend')
-  data <- read_transactions('./data/timeseries/storefront-deploy.rds', 'frontend')
-  boxplot <- mixed_charts(data)
-
-renderPlot({
-  boxplot(input)
-})
-
-radioButtons('bp', NULL, c(Scatterplot='scatter',Boxplot='boxplot'))
+data <- read_transactions('./data/timeseries/storefront-deploy.rds', 'frontend')
+boxplot <- mixed_charts(data)
+boxplot(list(bp='boxplot'))
 
 ```
 
@@ -95,6 +88,7 @@ Plots of throughput on the X axis and latency on the Y axis.  Color is time of d
 
 
 ```{r, fig.width=4, fig.height=3.5}
+cvb[,'Notice'] <- F
 cvb_plot(cvb, scale=0.5)
 
 ```

@@ -135,39 +135,108 @@ chart3 <- histogram_demo('./data/timeseries/by-client.rds', 'frontend')
 chart4 <- histogram_demo('./data/timeseries/by-client-60m.rds', 'backend')
 chart5 <- histogram_demo('./data/timeseries/storefront-deploy.rds', 'frontend')
 
-sidebarLayout(
-    sidebarPanel(
-        checkboxInput("in_logspace", label = " Log transform ", F),
-        checkboxInput("show_gmean", label = " Mean ", F), 
-        checkboxInput("show_median", label = " Median ", F),
-        checkboxInput("show_quartile_est", label = " Quartiles (est)", F), 
-        checkboxInput("show_quartile_act", label = " Quartiles (actual)", F)),
-    mainPanel(
-        renderPlot({ 
-            multiplot(chart1$hist(input), chart2$hist(input), chart3$hist(input), chart4$hist(input),
-                      cols=1)
-        })))
+input <- list(in_logspace=F,
+              show_gmean=F,
+              show_median=F,
+              show_quartile_est=F,
+              show_quartile_act=F)
+
+multiplot(chart1$hist(input), chart2$hist(input), chart3$hist(input), chart4$hist(input),
+          cols=1)
+```
+
+## 
+
+```{r, cache=F}
+
+input <- list(in_logspace=T,
+              show_gmean=F,
+              show_median=F,
+              show_quartile_est=F,
+              show_quartile_act=F)
+
+multiplot(chart1$hist(input), chart2$hist(input), chart3$hist(input), chart4$hist(input),
+          cols=1)
+```
+
+## 
+
+```{r, cache=F}
+
+input <- list(in_logspace=T,
+              show_gmean=T,
+              show_median=T,
+              show_quartile_est=F,
+              show_quartile_act=F)
+
+multiplot(chart1$hist(input), chart2$hist(input), chart3$hist(input), chart4$hist(input),
+          cols=1)
+```
+
+## 
+
+```{r, cache=F}
+
+input <- list(in_logspace=F,
+              show_gmean=T,
+              show_median=T,
+              show_quartile_est=F,
+              show_quartile_act=F)
+
+multiplot(chart1$hist(input), chart2$hist(input), chart3$hist(input), chart4$hist(input),
+          cols=1)
+```
+
+##
+
+```{r, cache=F}
+
+input <- list(in_logspace=F,
+              show_gmean=F,
+              show_median=F,
+              show_quartile_est=T,
+              show_quartile_act=T)
+
+multiplot(chart1$hist(input), chart2$hist(input), chart3$hist(input), chart4$hist(input),
+          cols=1)
+```
+
+##
+
+```{r}
+input <- list(scatterplot=T,
+              scatter_mean=T,
+              scatter_gmean=T,
+              scatter_quartiles_est=F)
+multiplot(cols=1,
+          chart5$scatterplot(input),
+          chart3$scatterplot(input))
 
 ```
 
 ##
 
-```{r echo = FALSE, cache=F, message=F}
-sidebarLayout(
-    sidebarPanel(
-        checkboxInput("scatterplot", label = " Scatterplot ", T),
-        checkboxInput("scatter_mean", label = " Mean ", F),
-        checkboxInput("scatter_gmean", label = " Geometric Mean ", F), 
-        checkboxInput("scatter_quartiles_est", label = " Estimated Quartiles ", F)
-    ),
-    mainPanel(
-        renderPlot({ 
-            multiplot(cols=1,
-                       chart5$scatterplot(input),
-                       chart3$scatterplot(input))
-        })
-    )
-)
+```{r}
+input <- list(scatterplot=T,
+              scatter_mean=F,
+              scatter_gmean=F,
+              scatter_quartiles_est=T)
+multiplot(cols=1,
+          chart5$scatterplot(input),
+          chart3$scatterplot(input))
+
+```
+
+##
+
+```{r}
+input <- list(scatterplot=F,
+              scatter_mean=F,
+              scatter_gmean=T,
+              scatter_quartiles_est=T)
+multiplot(cols=1,
+          chart5$scatterplot(input),
+          chart3$scatterplot(input))
 
 ```
 

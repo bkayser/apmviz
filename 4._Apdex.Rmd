@@ -37,16 +37,22 @@ is considered a satisfactory response time from a business perspective.
 
 ```{r, cache=F}
 ex3 <- read_transactions('./data/timeseries/news-site.rds', 'backend')
-t_limits <- signif(quantile(ex3$events$value, c(0.2, 0.96)), 2)
+t_limits <- signif(quantile(ex3$events$value, c(0.5, 0.80)), 2)
 
 apdex_example <- apdex_hist(ex3)
 
-renderPlot({
-  apdex_example(input$apdex_t)
-})
+apdex_example(t_limits[1])
+```
 
-sliderInput("apdex_t", label = "Apdex T:", width='100%', 
-              min = t_limits[1], max = t_limits[2], value = signif(quantile(ex3$events$value, 0.5),2), step = 100)
+## Configuring Apdex T
+
+```{r, cache=F}
+ex3 <- read_transactions('./data/timeseries/news-site.rds', 'backend')
+t_limits <- signif(quantile(ex3$events$value, c(0.5, 0.80)), 2)
+
+apdex_example <- apdex_hist(ex3)
+
+apdex_example(t_limits[2])
 ```
 
 ## Apdex Buttons

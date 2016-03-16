@@ -134,7 +134,7 @@ apdex_hist <- function(data) {
                        x=0.6 * limit, 
                        y=0.8 * max(ddata$d), 
                        size=14,
-                       label=stri_c('Score: ',round(apdex_score(data$events$value, apdex_t), 2))) +
+                       label=stri_c('Score: ',100*round(apdex_score(data$events$value, apdex_t), 2))) +
             geom_vline(xintercept=apdex_t) +
             geom_text(aes(x=apdex_t, y=max(d)),
                       #nudge_x=10,

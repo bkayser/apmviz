@@ -2,6 +2,8 @@
 
 The content in this repository was used for a presentation on Data Science and Application Performance Management.  The presentation is generated using R markdown, ioslides and the shiny execution runtime for R.
 
+The talk [can be viewed here](https://bkayser.github.io/apmviz).
+
 All graphics and analysis is generated using [the R statistical analysis package](http://r-project.org) and
 [R Studio](http://rstudio.org).  You can reproduce the presentation in RStudio by running the presentation found in `Index.Rmd`.
 

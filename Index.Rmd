@@ -2,8 +2,9 @@
 title: "In Graphic Detail"
 author: "Bill Kayser"
 date: "March, 2016"
-output: 
-  ioslides_presentation: 
+output:
+  beamer_presentation: default
+  ioslides_presentation:
     css: ./styles.css
     keep_md: yes
     logo: images/logo_text.png
@@ -115,9 +116,12 @@ cvb_plot(cvb, scale=0.5)
 
 Bill Kayser (@bravoking) - www.newrelic.com
 
-* This talk: [github.com/bkayser/apmviz](http://github.com/bkayser/apmviz)
+* This talk: [bkayser.github.io/apmviz](http://bkayser.github.io/apmviz)
+* Source for this talk: [github.com/bkayser/apmviz](http://github.com/bkayser/apmviz)
+
 * D3/Javascript version live demo: http://marlowe.datanerd.us
 * D3/Javascript source: [github.com/newrelic/marlowe](http://github.com/newrelic/marlowe)
+
 * R Library for getting New Relic Data: `github.com/bkayser/NewRelicR`
 
 

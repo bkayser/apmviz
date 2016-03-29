@@ -14,7 +14,7 @@ source('utils/horizon.R')
 
 knitr::opts_chunk$set(fig.width=9, fig.height=4.5,
                       echo=F, 
-                      cache=F,
+                      cache=T,
                       warning=F, 
                       message=F)
 

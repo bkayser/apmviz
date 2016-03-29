@@ -17,7 +17,18 @@ output: ioslides_presentation
     * Failed
 * Timeouts and errors automatically placed in Failed bin.
 
-## What is Apdex?
+## Apdex is a Three Bucket Histogram
+
+```{r, cache=F}
+ex3 <- read_transactions('./data/timeseries/news-site.rds', 'backend')
+t_limits <- signif(quantile(ex3$events$value, c(0.5, 0.80)), 2)
+
+apdex_example <- apdex_hist(ex3)
+
+apdex_example(t_limits[1], show_score=F)
+```
+
+## What is the Apdex Score?
 
 The Apdex Score is determined by the formula: 
 
@@ -36,8 +47,6 @@ is considered a satisfactory response time from a business perspective.
 ## Configuring Apdex T
 
 ```{r, cache=F}
-ex3 <- read_transactions('./data/timeseries/news-site.rds', 'backend')
-t_limits <- signif(quantile(ex3$events$value, c(0.5, 0.80)), 2)
 
 apdex_example <- apdex_hist(ex3)
 
@@ -76,31 +85,23 @@ apdex_button(ex4, signif(seq(sqrt(t_limits[1]), sqrt(t_limits[2]), length.out = 
 
 ```{r}
 
-buttons <- apdex_grid(app_group)
 svec <- sapply(app_group, function(data) { as.integer(100 * data$summary$score) })
+
+appnames <- sapply(app_group, function(group) tools::toTitleCase(group$name))
+            
 scoredata <- data.frame(score=svec, 
                         index=1:length(app_group),
                         q=findInterval(svec, c(82, 91)))
-scores <- ggplot(scoredata) +
-    geom_text(aes(x=0, y=index, color=as.factor(q), label=score), size=10) +
-    scale_color_manual(values=c('red', '#666666', 'darkgreen')) +
-    ylim(0.5, length(app_group)+0.5)+
-    blank_theme
 
-sparkdata <- lapply(app_group, function(data) {
-    filter(data$plotlines, measure=='median') %>%
-        mutate(name=data$name)
-}) %>% bind_rows
 
-sparklines <- ggplot(sparkdata) +
-    aes(x=timestamp, y=value) +
-    geom_line() +
-    facet_grid(name ~ ., scales='free_y') +
-    xlim(min(sparkdata$timestamp), min(sparkdata$timestamp + minutes(10))) +
+apdex_grid(app_group) +
+    geom_text(aes(x=0.7, color=as.factor(scoredata$q), label=scoredata$score),
+              size=10, show.legend = F) +
+    scale_color_manual(values=c('red', '#999999', 'darkgreen')) +
+    geom_text(aes(x=1.2,label=appnames), color='#444444', size=8, hjust=0)  +
     blank_theme +
-    theme(panel.background = element_rect(fill='#EEEEEE'))
-
-multiplot(sparklines, buttons, scores, cols=3, widths=c(40,6, 4))
+    xlim(-0.5, 7)
+    
 ```
 
 ## Apdex vs Mean

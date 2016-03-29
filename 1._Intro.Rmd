@@ -25,14 +25,6 @@ source('init.R')
 * Working in APM for 10 years
 * Data Science, Machine Learning, and Visualization
 
-<div class="notes">
-
-My name is Bill Kayser and I am a Data Nerd.
-
-I think about data all the time.  I think about web applications, the data that we use to measure them, 
-and the way we visualize that data.
-
-</div>
 
 ## Congratulations!
 
@@ -41,19 +33,6 @@ and the way we visualize that data.
 ## Now What?
 
 <img class='graphic tall' src='./images/whatsnext.jpg'/>
-
-<div class="notes">
-
-There's a lot of information you need access to in order to serve your customers.
-For the purposes of this talk, let's just focus this on how well your site is serving 
-your customers.  You want to find out what the user experience is like.  You want to get a sense of 
-the best and worst case as well as the variance.  You also want to know how your application
-responds to changes in load, whether it's trending up or trending down, and where you 
-are having problems.
-
-For this talk I'm going to focus on the response time of web applications.
-
-</div>
 
 ## What's the average time to service a request?
 
@@ -176,6 +155,16 @@ multiplot(g_hist_complete + clean_theme,
 
 ```{r raw}
 (g_scatter <- scatterplot(microservice))
+```
+
+## Throughput vs Response Time
+
+```{r}
+
+df <- dcast(microservice$plotlines, timestamp ~ measure, drop=F)
+
+qplot(data=df, throughput, median, geom='point') + stat_smooth()
+
 ```
 
 ## Using Everything at Once

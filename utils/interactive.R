@@ -121,7 +121,7 @@ apdex_hist <- function(data) {
                        Tolerating='#ffcc33',
                        Failed='red')
     
-    function(apdex_t) {
+    function(apdex_t, show_score=T) {
         bucketed_data <- mutate(ddata, 
                                 bucket=as.factor(c('Satisfied', 'Tolerating', 'Failed')[findInterval(x, c(apdex_t, 4*apdex_t))+1]))
         
@@ -130,27 +130,39 @@ apdex_hist <- function(data) {
             geom_area() +
             scale_fill_manual(values=bucket_colors, name=NULL) +
             scale_color_manual(values=c(bucket_colors), name=NULL) +
-            geom_text(inherit.aes = F, 
-                       x=0.6 * limit, 
-                       y=0.8 * max(ddata$d), 
-                       size=14,
-                       label=stri_c('Score: ',100*round(apdex_score(data$events$value, apdex_t), 2))) +
             geom_vline(xintercept=apdex_t) +
             geom_text(aes(x=apdex_t, y=max(d)),
-                      #nudge_x=10,
-                      size=12,
+                      size=10,
                       hjust='left', 
                       vjust='top',
                       label=stri_c(' T = ',apdex_t)) +
+
             geom_rug(aes(color=bucket), sides="b", show.legend = F) +
             my_plot_theme +
-            theme(legend.position = c(0.7, 0.5), 
+            theme(legend.position = c(0.7, 0.6), 
                   text=element_text(size=32),
                   legend.justification = "left",
                   legend.key.height=unit(1.2, 'cm'),
                   legend.key.width=unit(1.2, 'cm'),
                   axis.text.y=element_blank(),
                   axis.title = element_blank())
+        if (show_score) {
+            g_apdex <- g_apdex +
+                geom_text(inherit.aes = F, 
+                          x=0.8 * limit, 
+                          y=0.9 * max(ddata$d), 
+                          size=14,
+                          label=stri_c('Score: ',100*round(apdex_score(data$events$value, apdex_t), 2))) 
+                
+        } else {
+            g_apdex <- g_apdex + 
+                geom_vline(xintercept=4*apdex_t) +
+                geom_text(aes(x=4*apdex_t, y=0.28 * max(d)),
+                          size=10,
+                          hjust='left', 
+                          vjust='top',
+                          label=stri_c(' 4T = ',4*apdex_t))
+        }
         g_apdex 
     }
 }

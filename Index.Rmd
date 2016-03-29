@@ -3,13 +3,13 @@ title: "In Graphic Detail"
 author: "Bill Kayser"
 date: "March, 2016"
 output:
-  beamer_presentation: default
   ioslides_presentation:
     css: ./styles.css
     keep_md: yes
     logo: images/logo_text.png
     smaller: yes
     widescreen: yes
+  beamer_presentation: default
 ---
 ```{r init, echo=F, message=F, warning=F}
 source('init.R')
